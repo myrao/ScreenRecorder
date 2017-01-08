@@ -107,7 +107,6 @@ public class ScreenRecorder extends Thread {
             Log.i(TAG, "dequeue output buffer index=" + index);
             if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 resetOutputFormat();
-
             } else if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 Log.d(TAG, "retrieving buffers time out!");
                 try {
@@ -116,12 +115,10 @@ public class ScreenRecorder extends Thread {
                 } catch (InterruptedException e) {
                 }
             } else if (index >= 0) {
-
                 if (!mMuxerStarted) {
                     throw new IllegalStateException("MediaMuxer dose not call addTrack(format) ");
                 }
                 encodeToVideoTrack(index);
-
                 mEncoder.releaseOutputBuffer(index, false);
             }
         }
@@ -201,5 +198,10 @@ public class ScreenRecorder extends Thread {
             mMuxer.release();
             mMuxer = null;
         }
+    }
+
+
+    public final boolean getStatus() {
+        return !mQuit.get();
     }
 }

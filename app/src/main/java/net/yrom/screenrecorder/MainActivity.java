@@ -26,6 +26,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import net.yrom.screenrecorder.service.ScreenRecordListenerService;
+
 import java.io.File;
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -33,6 +35,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private MediaProjectionManager mMediaProjectionManager;
     private ScreenRecorder mRecorder;
     private Button mButton;
+    private boolean isRecording;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mRecorder = null;
             mButton.setText("Restart recorder");
         } else {
+            isRecording = true;
             Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
             startActivityForResult(captureIntent, REQUEST_CODE);
         }
@@ -80,9 +84,39 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mRecorder != null){
+        if (mRecorder != null) {
             mRecorder.quit();
             mRecorder = null;
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isRecording) stopScreenRecordService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isRecording) startScreenRecordService();
+    }
+
+    private void startScreenRecordService() {
+        if (mRecorder != null && mRecorder.getStatus()) {
+            Intent runningServiceIT = new Intent(this, ScreenRecordListenerService.class);
+//            bindService(runningServiceIT, connection, BIND_AUTO_CREATE);
+            startService(runningServiceIT);
+        }
+    }
+
+    private void stopScreenRecordService() {
+        Intent runningServiceIT = new Intent(this, ScreenRecordListenerService.class);
+        stopService(runningServiceIT);
+        if (mRecorder != null && mRecorder.getStatus()) {
+            Toast.makeText(this, "现在正在进行录屏直播哦", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }
