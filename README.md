@@ -1,4 +1,4 @@
-本Demo是在作者Yrom的项目 [ScreenRecorder](https://github.com/yrom/ScreenRecorder) 的基础上额外增加了悬浮窗和通知栏等特性，详情见我的博文[Android实现录屏直播（二）需求才是硬道理之产品功能调研]()
+本Demo是在作者Yrom的项目 [ScreenRecorder](https://github.com/yrom/ScreenRecorder) 的基础上额外增加了悬浮窗和通知栏等特性，详情见我的博文[Android实现录屏直播（二）需求才是硬道理之产品功能调研](http://blog.csdn.net/zxccxzzxz/article/details/54254244)
 
 Screen Recorder
 =====
