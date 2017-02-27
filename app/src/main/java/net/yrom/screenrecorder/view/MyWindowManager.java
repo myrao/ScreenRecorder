@@ -113,4 +113,9 @@ public class MyWindowManager {
         return smallWindow != null;
     }
 
+    public static ScreenFloatingWindow getSmallWindow() {
+        if (smallWindow == null) return null;
+        return smallWindow;
+    }
+
 }

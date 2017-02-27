@@ -1,6 +1,8 @@
 package net.yrom.screenrecorder.view;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,7 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.yrom.screenrecorder.R;
-import net.yrom.screenrecorder.model.CommentBean;
+import net.yrom.screenrecorder.model.DanmakuBean;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -277,9 +279,9 @@ public class ScreenFloatingWindow extends FrameLayout implements IScreenRecordFl
 
     private static class DanmakuListAdapter extends BaseAdapter {
 
-        private List<CommentBean> danmakuList = new ArrayList<>();
+        private List<DanmakuBean> danmakuList = new ArrayList<>();
 
-        private void setDataToAdapter(List<CommentBean> danmakuList) {
+        private void setDataToAdapter(List<DanmakuBean> danmakuList) {
             if (danmakuList == null) return;
             if (danmakuList.size() <= 0) return;
             this.danmakuList.addAll(danmakuList);
@@ -325,14 +327,19 @@ public class ScreenFloatingWindow extends FrameLayout implements IScreenRecordFl
             private TextView messageTV;
 
             private ViewHolder(View view) {
-            // BindView(view);
+                // BindView(view);
             }
         }
     }
 
-    public void setDataToList(List<CommentBean> danmakuList) {
+    public void setDataToList(final List<DanmakuBean> danmakuList) {
         if (listAdapter != null) {
-            listAdapter.setDataToAdapter(danmakuList);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    listAdapter.setDataToAdapter(danmakuList);
+                }
+            });
         }
     }
 

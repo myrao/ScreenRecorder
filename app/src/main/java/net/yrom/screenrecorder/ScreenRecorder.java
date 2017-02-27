@@ -86,7 +86,6 @@ public class ScreenRecorder extends Thread {
             try {
                 prepareEncoder();
                 mMuxer = new MediaMuxer(mDstPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

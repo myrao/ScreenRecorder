@@ -7,18 +7,25 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import net.yrom.screenrecorder.IScreenRecorderAidlInterface;
 import net.yrom.screenrecorder.MainActivity;
 import net.yrom.screenrecorder.R;
+import net.yrom.screenrecorder.model.DanmakuBean;
 import net.yrom.screenrecorder.view.MyWindowManager;
+
+import java.util.List;
 
 /**
  * author : raomengyang on 2016/12/29.
  */
 
 public class ScreenRecordListenerService extends Service {
-    private static final String TAG = "ScreenRecordListenerService, ";
+
+    private static final String TAG = ScreenRecordListenerService.class.getSimpleName();
 
     public static final int PENDING_REQUEST_CODE = 0x01;
     private static final int NOTIFICATION_ID = 3;
@@ -34,7 +41,7 @@ public class ScreenRecordListenerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
@@ -48,7 +55,6 @@ public class ScreenRecordListenerService extends Service {
                 }
             });
         }
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -76,5 +82,21 @@ public class ScreenRecordListenerService extends Service {
         }
         MyWindowManager.removeSmallWindow(getApplicationContext());
     }
+
+    private IScreenRecorderAidlInterface.Stub mBinder = new IScreenRecorderAidlInterface.Stub() {
+
+        @Override
+        public void sendDanmaku(List<DanmakuBean> danmakuBean) throws RemoteException {
+            Log.e(TAG, "danmaku msg = " + danmakuBean.get(0).getMessage());
+            if (MyWindowManager.isWindowShowing()) {
+                MyWindowManager.getSmallWindow().setDataToList(danmakuBean);
+            }
+        }
+
+        @Override
+        public void startScreenRecord(Intent bundleData) throws RemoteException {
+
+        }
+    };
 
 }

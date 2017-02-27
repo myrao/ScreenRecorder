@@ -16,19 +16,33 @@
 package net.yrom.screenrecorder;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import net.yrom.screenrecorder.model.DanmakuBean;
 import net.yrom.screenrecorder.service.ScreenRecordListenerService;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private static final int REQUEST_CODE = 1;
@@ -37,13 +51,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button mButton;
     private boolean isRecording;
 
+    private IScreenRecorderAidlInterface recorderAidlInterface;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            recorderAidlInterface = IScreenRecorderAidlInterface.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            recorderAidlInterface = null;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mButton = (Button) findViewById(R.id.button);
         mButton.setOnClickListener(this);
-        //noinspection ResourceType
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
     }
 
@@ -102,12 +128,43 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (isRecording) startScreenRecordService();
     }
 
+    List<DanmakuBean> danmakuBeanList = new ArrayList<>();
+
     private void startScreenRecordService() {
         if (mRecorder != null && mRecorder.getStatus()) {
             Intent runningServiceIT = new Intent(this, ScreenRecordListenerService.class);
-//            bindService(runningServiceIT, connection, BIND_AUTO_CREATE);
+            bindService(runningServiceIT, connection, BIND_AUTO_CREATE);
             startService(runningServiceIT);
+            startAutoSendDanmaku();
         }
+    }
+
+    private void startAutoSendDanmaku() {
+        ExecutorService exec = Executors.newCachedThreadPool();
+        exec.execute(new Runnable() {
+            @Override
+            public void run() {
+                int index = 0;
+                while (true) {
+                    DanmakuBean danmakuBean = new DanmakuBean();
+                    danmakuBean.setMessage(String.valueOf(index++));
+                    danmakuBean.setName("little girl");
+                    danmakuBeanList.add(danmakuBean);
+                    try {
+                        if (recorderAidlInterface != null) {
+                            recorderAidlInterface.sendDanmaku(danmakuBeanList);
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     private void stopScreenRecordService() {
