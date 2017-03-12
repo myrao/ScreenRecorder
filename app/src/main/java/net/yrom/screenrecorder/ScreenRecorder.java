@@ -38,6 +38,7 @@ import static net.yrom.screenrecorder.rtmp.RESFlvData.FLV_RTMP_PACKET_TYPE_VIDEO
 
 /**
  * @author Yrom
+ * Modified by raomengyang 2017-03-12
  */
 public class ScreenRecorder extends Thread {
     private static final String TAG = "ScreenRecorder";
@@ -46,7 +47,6 @@ public class ScreenRecorder extends Thread {
     private int mHeight;
     private int mBitRate;
     private int mDpi;
-    private String mDstPath;
     private MediaProjection mMediaProjection;
     // parameters for the encoder
     private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video Coding
@@ -56,7 +56,6 @@ public class ScreenRecorder extends Thread {
 
     private MediaCodec mEncoder;
     private Surface mSurface;
-    private int mVideoTrackIndex = -1;
     private long startTime = 0;
     private AtomicBoolean mQuit = new AtomicBoolean(false);
     private MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();

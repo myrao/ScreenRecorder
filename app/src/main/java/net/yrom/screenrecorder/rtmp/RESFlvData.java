@@ -2,13 +2,22 @@ package net.yrom.screenrecorder.rtmp;
 
 /**
  * Created by lake on 16-3-16.
+ * Modified by raomengyang on 17-3-12
  */
 public class RESFlvData {
 
-    public final static int FLV_RTMP_PACKET_TYPE_VIDEO = 9;
-    public final static int FLV_RTMP_PACKET_TYPE_AUDIO = 8;
-    public final static int FLV_RTMP_PACKET_TYPE_INFO = 18;
-    public final static int NALU_TYPE_IDR = 5;
+    // video size
+    public static final int VIDEO_WIDTH = 1280;
+    public static final int VIDEO_HEIGHT = 720;
+    public static final int VIDEO_BITRATE = 600000; // 600Kbps
+    public static final int FPS = 20;
+    public static final int AAC_SAMPLE_RATE = 44100;
+    public static final int AAC_BITRATE = 32 * 1024;
+
+    public static final int FLV_RTMP_PACKET_TYPE_VIDEO = 9;
+    public static final int FLV_RTMP_PACKET_TYPE_AUDIO = 8;
+    public static final int FLV_RTMP_PACKET_TYPE_INFO = 18;
+    public static final int NALU_TYPE_IDR = 5;
 
     public boolean droppable;
 

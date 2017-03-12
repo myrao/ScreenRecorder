@@ -55,8 +55,8 @@ public class FLvMetaData {
         //h264
         setProperty("videocodecid", 7);
         setProperty("framerate", coreParameters.mediacodecAVCFrameRate);
-        setProperty("width", coreParameters.videoWidth);
-        setProperty("height", coreParameters.videoHeight);
+        setProperty("VIDEO_WIDTH", coreParameters.videoWidth);
+        setProperty("VIDEO_HEIGHT", coreParameters.videoHeight);
     }
 
     public void setProperty(String Key, int value) {

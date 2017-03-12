@@ -38,11 +38,11 @@ public class RtmpStreamingSender implements Runnable {
 
     public RtmpStreamingSender() {
         coreParameters = new RESCoreParameters();
-        coreParameters.mediacodecAACBitRate = 32 * 1024;
-        coreParameters.mediacodecAACSampleRate = 44100;
-        coreParameters.mediacodecAVCFrameRate = 20;
-        coreParameters.videoWidth = 1280;
-        coreParameters.videoHeight = 720;
+        coreParameters.mediacodecAACBitRate = RESFlvData.AAC_BITRATE;
+        coreParameters.mediacodecAACSampleRate = RESFlvData.AAC_SAMPLE_RATE;
+        coreParameters.mediacodecAVCFrameRate = RESFlvData.FPS;
+        coreParameters.videoWidth = RESFlvData.VIDEO_WIDTH;
+        coreParameters.videoHeight = RESFlvData.VIDEO_HEIGHT;
 
         fLvMetaData = new FLvMetaData(coreParameters);
     }
@@ -143,12 +143,7 @@ public class RtmpStreamingSender implements Runnable {
     }
 
 
-    /**
-     * stop task
-     */
     public final void quit() {
         mQuit.set(true);
     }
-
-
 }

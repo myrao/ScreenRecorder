@@ -84,10 +84,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Log.e("@@", "media projection is null");
             return;
         }
-        // video size
-        final int width = 1280;
-        final int height = 720;
-        final int bitrate = 600000;
         rtmpAddr = mRtmpAddET.getText().toString().trim();
         if (TextUtils.isEmpty(rtmpAddr)) {
             Toast.makeText(this, "rtmp address cannot be null", Toast.LENGTH_SHORT).show();
@@ -101,7 +97,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 streamingSender.sendFood(flvData, type);
             }
         };
-        mRecorder = new ScreenRecorder(collecter, width, height, bitrate, 1, mediaProjection);
+        mRecorder = new ScreenRecorder(collecter, RESFlvData.VIDEO_WIDTH, RESFlvData.VIDEO_HEIGHT, RESFlvData.VIDEO_BITRATE, 1, mediaProjection);
         mRecorder.start();
         executorService = Executors.newCachedThreadPool();
         executorService.execute(streamingSender);
