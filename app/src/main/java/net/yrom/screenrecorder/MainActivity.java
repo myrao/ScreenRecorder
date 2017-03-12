@@ -22,33 +22,36 @@ import android.content.ServiceConnection;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import net.yrom.screenrecorder.model.DanmakuBean;
+import net.yrom.screenrecorder.rtmp.RESFlvData;
+import net.yrom.screenrecorder.rtmp.RESFlvDataCollecter;
 import net.yrom.screenrecorder.service.ScreenRecordListenerService;
+import net.yrom.screenrecorder.task.RtmpStreamingSender;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private static final int REQUEST_CODE = 1;
+    private Button mButton;
+    private EditText mRtmpAddET;
     private MediaProjectionManager mMediaProjectionManager;
     private ScreenRecorder mRecorder;
-    private Button mButton;
+    private RtmpStreamingSender streamingSender;
+    private ExecutorService executorService;
+    private List<DanmakuBean> danmakuBeanList = new ArrayList<>();
+    private String rtmpAddr;
     private boolean isRecording;
 
     private IScreenRecorderAidlInterface recorderAidlInterface;
@@ -69,6 +72,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mButton = (Button) findViewById(R.id.button);
+        mRtmpAddET = (EditText) findViewById(R.id.et_rtmp_address);
         mButton.setOnClickListener(this);
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
     }
@@ -83,11 +87,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // video size
         final int width = 1280;
         final int height = 720;
-        File file = new File(Environment.getExternalStorageDirectory(),
-                "record-" + width + "x" + height + "-" + System.currentTimeMillis() + ".mp4");
-        final int bitrate = 6000000;
-        mRecorder = new ScreenRecorder(width, height, bitrate, 1, mediaProjection, file.getAbsolutePath());
+        final int bitrate = 600000;
+        rtmpAddr = mRtmpAddET.getText().toString().trim();
+        if (TextUtils.isEmpty(rtmpAddr)) {
+            Toast.makeText(this, "rtmp address cannot be null", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        streamingSender = new RtmpStreamingSender();
+        streamingSender.sendStart(rtmpAddr);
+        RESFlvDataCollecter collecter = new RESFlvDataCollecter() {
+            @Override
+            public void collect(RESFlvData flvData, int type) {
+                streamingSender.sendFood(flvData, type);
+            }
+        };
+        mRecorder = new ScreenRecorder(collecter, width, height, bitrate, 1, mediaProjection);
         mRecorder.start();
+        executorService = Executors.newCachedThreadPool();
+        executorService.execute(streamingSender);
         mButton.setText("Stop Recorder");
         Toast.makeText(this, "Screen recorder is running...", Toast.LENGTH_SHORT).show();
         moveTaskToBack(true);
@@ -98,6 +115,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (mRecorder != null) {
             mRecorder.quit();
             mRecorder = null;
+            if (streamingSender != null) {
+                streamingSender.sendStop();
+                streamingSender.quit();
+                streamingSender = null;
+            }
+            if (executorService != null) {
+                executorService.shutdown();
+                executorService = null;
+            }
             mButton.setText("Restart recorder");
         } else {
             isRecording = true;
@@ -113,6 +139,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (mRecorder != null) {
             mRecorder.quit();
             mRecorder = null;
+            if (streamingSender != null) {
+                streamingSender.quit();
+                streamingSender = null;
+            }
+            if (executorService != null) {
+                executorService.shutdown();
+                executorService = null;
+            }
+            mButton.setText("Restart recorder");
         }
     }
 
@@ -127,8 +162,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onStop();
         if (isRecording) startScreenRecordService();
     }
-
-    List<DanmakuBean> danmakuBeanList = new ArrayList<>();
 
     private void startScreenRecordService() {
         if (mRecorder != null && mRecorder.getStatus()) {
@@ -174,6 +207,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Toast.makeText(this, "现在正在进行录屏直播哦", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 }
