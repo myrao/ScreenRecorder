@@ -1,7 +1,16 @@
 本Demo是在作者Yrom的项目 [ScreenRecorder](https://github.com/yrom/ScreenRecorder) 的基础上额外增加了悬浮窗和通知栏等特性，详情见我的博文[Android实现录屏直播（二）需求才是硬道理之产品功能调研](http://blog.csdn.net/zxccxzzxz/article/details/54254244)
 
+## Updated 3.12
+Demo中集成了录屏直播推流的功能，内含个人自己搭建的Nginx + rtmp流媒体服务器,去掉了录屏存入本地文件的部分代码，之后会重新建项目完全移植过去，并且计划拥有滤镜和OpenGL来控制帧率等功能。
+需要的朋友可以自行使用，推流格式：rtmp://59.130.110.19:1935/live/yourstreamingkey
+
+
 ### 仿Bilibili悬浮窗与通知栏
 ![效果图](https://raw.githubusercontent.com/eterrao/ScreenRecorder/master/images/screenRecorderDemo.gif)
+
+
+### 录屏推流直播
+![推流效果图](https://raw.githubusercontent.com/eterrao/ScreenRecorder/master/images/ScreenRecorderDemo.jpeg)
 
 
 Screen Recorder
