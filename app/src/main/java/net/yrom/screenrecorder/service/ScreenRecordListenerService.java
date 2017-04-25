@@ -58,7 +58,6 @@ public class ScreenRecordListenerService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-
     private void initNotification() {
         builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)

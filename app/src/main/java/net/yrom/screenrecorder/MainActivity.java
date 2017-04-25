@@ -101,6 +101,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mRecorder.start();
         executorService = Executors.newCachedThreadPool();
         executorService.execute(streamingSender);
+
         mButton.setText("Stop Recorder");
         Toast.makeText(this, "Screen recorder is running...", Toast.LENGTH_SHORT).show();
         moveTaskToBack(true);
@@ -109,41 +110,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (mRecorder != null) {
-            mRecorder.quit();
-            mRecorder = null;
-            if (streamingSender != null) {
-                streamingSender.sendStop();
-                streamingSender.quit();
-                streamingSender = null;
-            }
-            if (executorService != null) {
-                executorService.shutdown();
-                executorService = null;
-            }
-            mButton.setText("Restart recorder");
+            stopScreenRecord();
         } else {
-            isRecording = true;
-            Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
-            startActivityForResult(captureIntent, REQUEST_CODE);
+            createScreenCapture();
         }
     }
-
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mRecorder != null) {
-            mRecorder.quit();
-            mRecorder = null;
-            if (streamingSender != null) {
-                streamingSender.quit();
-                streamingSender = null;
-            }
-            if (executorService != null) {
-                executorService.shutdown();
-                executorService = null;
-            }
-            mButton.setText("Restart recorder");
+            stopScreenRecord();
         }
     }
 
@@ -204,4 +181,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private void createScreenCapture() {
+        isRecording = true;
+        Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult(captureIntent, REQUEST_CODE);
+    }
+
+    private void stopScreenRecord() {
+        mRecorder.quit();
+        mRecorder = null;
+        if (streamingSender != null) {
+            streamingSender.sendStop();
+            streamingSender.quit();
+            streamingSender = null;
+        }
+        if (executorService != null) {
+            executorService.shutdown();
+            executorService = null;
+        }
+        mButton.setText("Restart recorder");
+    }
 }

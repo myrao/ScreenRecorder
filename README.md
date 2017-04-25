@@ -1,5 +1,16 @@
 本Demo是在作者Yrom的项目 [ScreenRecorder](https://github.com/yrom/ScreenRecorder) 的基础上额外增加了悬浮窗和通知栏等特性，详情见我的博文[Android实现录屏直播（二）需求才是硬道理之产品功能调研](http://blog.csdn.net/zxccxzzxz/article/details/54254244)
 
+目前只实现了录屏的 Video 推流，有朋友提到的音频迟迟没有，还有摄像头采集也将纳入计划
+
+### TODO LIST
+
+- 加入音频采集及推流
+- 加入摄像头采集及推流（包含拍摄直播、录屏直播两种功能）
+- 修复视频端对端延迟过长的问题
+- 代码重构，改善代码的可读性，并且往 SDK 的方向推进
+
+------
+
 ### 仿Bilibili悬浮窗与通知栏
 ![效果图](https://raw.githubusercontent.com/eterrao/ScreenRecorder/master/images/screenRecorderDemo.gif)
 
