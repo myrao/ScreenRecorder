@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.yrom.screenrecorder;
+package net.yrom.screenrecorder.ui.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.projection.MediaProjection;
@@ -31,6 +32,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import net.yrom.screenrecorder.IScreenRecorderAidlInterface;
+import net.yrom.screenrecorder.R;
+import net.yrom.screenrecorder.ScreenRecorder;
 import net.yrom.screenrecorder.model.DanmakuBean;
 import net.yrom.screenrecorder.rtmp.RESFlvData;
 import net.yrom.screenrecorder.rtmp.RESFlvDataCollecter;
@@ -42,7 +46,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class ScreenRecordActivity extends Activity implements View.OnClickListener {
     private static final int REQUEST_CODE = 1;
     private Button mButton;
     private EditText mRtmpAddET;
@@ -53,6 +57,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private List<DanmakuBean> danmakuBeanList = new ArrayList<>();
     private String rtmpAddr;
     private boolean isRecording;
+
+    public static void launchActivity(Context ctx) {
+        Intent it = new Intent(ctx, ScreenRecordActivity.class);
+        it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ctx.startActivity(it);
+    }
 
     private IScreenRecorderAidlInterface recorderAidlInterface;
     private ServiceConnection connection = new ServiceConnection() {
@@ -201,4 +211,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         mButton.setText("Restart recorder");
     }
+
+
 }

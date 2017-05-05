@@ -12,7 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import net.yrom.screenrecorder.IScreenRecorderAidlInterface;
-import net.yrom.screenrecorder.MainActivity;
+import net.yrom.screenrecorder.ui.activity.ScreenRecordActivity;
 import net.yrom.screenrecorder.R;
 import net.yrom.screenrecorder.model.DanmakuBean;
 import net.yrom.screenrecorder.view.MyWindowManager;
@@ -66,7 +66,7 @@ public class ScreenRecordListenerService extends Service {
                 .setOngoing(true)
                 .setDefaults(Notification.DEFAULT_VIBRATE);
 
-        Intent backIntent = new Intent(this, MainActivity.class);
+        Intent backIntent = new Intent(this, ScreenRecordActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, PENDING_REQUEST_CODE, backIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

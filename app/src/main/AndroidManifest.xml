@@ -23,19 +23,26 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="net.yrom.screenrecorder.MainActivity"
-            android:label="@string/app_name">
+            android:name=".ui.activity.ScreenRecordActivity"
+            android:label="@string/app_name" />
+
+        <service
+            android:name=".service.ScreenRecordListenerService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activity.LaunchActivity"
+            android:theme="@style/Base.Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".service.ScreenRecordListenerService"
-            android:enabled="true"
-            android:exported="false" />
+        <activity
+            android:name=".ui.activity.CameraActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
     </application>
 
 </manifest>

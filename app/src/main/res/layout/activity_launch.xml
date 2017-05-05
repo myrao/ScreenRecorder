@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="net.yrom.screenrecorder.ui.activity.LaunchActivity">
+
+    <Button
+        android:id="@+id/btn_screen_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Screen record" />
+
+    <Button
+        android:id="@+id/btn_camera_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Camera record" />
+</LinearLayout>
