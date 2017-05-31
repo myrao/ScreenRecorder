@@ -34,12 +34,15 @@ import android.widget.Toast;
 
 import net.yrom.screenrecorder.IScreenRecorderAidlInterface;
 import net.yrom.screenrecorder.R;
-import net.yrom.screenrecorder.ScreenRecorder;
+import net.yrom.screenrecorder.core.RESAudioClient;
+import net.yrom.screenrecorder.core.RESCoreParameters;
 import net.yrom.screenrecorder.model.DanmakuBean;
 import net.yrom.screenrecorder.rtmp.RESFlvData;
 import net.yrom.screenrecorder.rtmp.RESFlvDataCollecter;
 import net.yrom.screenrecorder.service.ScreenRecordListenerService;
 import net.yrom.screenrecorder.task.RtmpStreamingSender;
+import net.yrom.screenrecorder.task.ScreenRecorder;
+import net.yrom.screenrecorder.tools.LogTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +54,14 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
     private Button mButton;
     private EditText mRtmpAddET;
     private MediaProjectionManager mMediaProjectionManager;
-    private ScreenRecorder mRecorder;
+    private ScreenRecorder mVideoRecorder;
+    private RESAudioClient audioClient;
     private RtmpStreamingSender streamingSender;
     private ExecutorService executorService;
     private List<DanmakuBean> danmakuBeanList = new ArrayList<>();
     private String rtmpAddr;
     private boolean isRecording;
+    private RESCoreParameters coreParameters;
 
     public static void launchActivity(Context ctx) {
         Intent it = new Intent(ctx, ScreenRecordActivity.class);
@@ -107,8 +112,19 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
                 streamingSender.sendFood(flvData, type);
             }
         };
-        mRecorder = new ScreenRecorder(collecter, RESFlvData.VIDEO_WIDTH, RESFlvData.VIDEO_HEIGHT, RESFlvData.VIDEO_BITRATE, 1, mediaProjection);
-        mRecorder.start();
+        coreParameters = new RESCoreParameters();
+
+        audioClient = new RESAudioClient(coreParameters);
+
+        if (!audioClient.prepare()) {
+            LogTools.d("!!!!!audioClient.prepare()failed");
+            return;
+        }
+
+        mVideoRecorder = new ScreenRecorder(collecter, RESFlvData.VIDEO_WIDTH, RESFlvData.VIDEO_HEIGHT, RESFlvData.VIDEO_BITRATE, 1, mediaProjection);
+        mVideoRecorder.start();
+        audioClient.start(collecter);
+
         executorService = Executors.newCachedThreadPool();
         executorService.execute(streamingSender);
 
@@ -117,9 +133,10 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
         moveTaskToBack(true);
     }
 
+
     @Override
     public void onClick(View v) {
-        if (mRecorder != null) {
+        if (mVideoRecorder != null) {
             stopScreenRecord();
         } else {
             createScreenCapture();
@@ -129,7 +146,7 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mRecorder != null) {
+        if (mVideoRecorder != null) {
             stopScreenRecord();
         }
     }
@@ -147,7 +164,7 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
     }
 
     private void startScreenRecordService() {
-        if (mRecorder != null && mRecorder.getStatus()) {
+        if (mVideoRecorder != null && mVideoRecorder.getStatus()) {
             Intent runningServiceIT = new Intent(this, ScreenRecordListenerService.class);
             bindService(runningServiceIT, connection, BIND_AUTO_CREATE);
             startService(runningServiceIT);
@@ -186,7 +203,7 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
     private void stopScreenRecordService() {
         Intent runningServiceIT = new Intent(this, ScreenRecordListenerService.class);
         stopService(runningServiceIT);
-        if (mRecorder != null && mRecorder.getStatus()) {
+        if (mVideoRecorder != null && mVideoRecorder.getStatus()) {
             Toast.makeText(this, "现在正在进行录屏直播哦", Toast.LENGTH_SHORT).show();
         }
     }
@@ -198,8 +215,8 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
     }
 
     private void stopScreenRecord() {
-        mRecorder.quit();
-        mRecorder = null;
+        mVideoRecorder.quit();
+        mVideoRecorder = null;
         if (streamingSender != null) {
             streamingSender.sendStop();
             streamingSender.quit();
@@ -212,5 +229,16 @@ public class ScreenRecordActivity extends Activity implements View.OnClickListen
         mButton.setText("Restart recorder");
     }
 
+    public static class RESAudioBuff {
+        public boolean isReadyToFill;
+        public int audioFormat = -1;
+        public byte[] buff;
+
+        public RESAudioBuff(int audioFormat, int size) {
+            isReadyToFill = true;
+            this.audioFormat = audioFormat;
+            buff = new byte[size];
+        }
+    }
 
 }

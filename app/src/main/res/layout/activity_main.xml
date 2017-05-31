@@ -11,6 +11,7 @@
         android:gravity="center"
         android:hint="your rtmp address"
         android:textColor="#000000"
+        android:text="rtmp://59.110.159.133/live/test"
         android:textSize="13sp" />
 
     <Button

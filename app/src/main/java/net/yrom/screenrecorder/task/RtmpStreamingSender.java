@@ -26,7 +26,7 @@ public class RtmpStreamingSender implements Runnable {
     private volatile int state;
 
     private long jniRtmpPointer = 0;
-    private int maxQueueLength = 150;
+    private int maxQueueLength = 50;
     private int writeMsgNum = 0;
     private String rtmpAddr = null;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.yrom.screenrecorder;
+package net.yrom.screenrecorder.task;
 
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -51,7 +51,7 @@ public class ScreenRecorder extends Thread {
     // parameters for the encoder
     private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video Coding
     private static final int FRAME_RATE = 30; // 30 fps
-    private static final int IFRAME_INTERVAL = 10; // 10 seconds between I-frames
+    private static final int IFRAME_INTERVAL = 2; // 2 seconds between I-frames
     private static final int TIMEOUT_US = 10000;
 
     private MediaCodec mEncoder;
@@ -102,14 +102,12 @@ public class ScreenRecorder extends Thread {
 
 
     private void prepareEncoder() throws IOException {
-
         MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, mWidth, mHeight);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, mBitRate);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
-
         Log.d(TAG, "created video format: " + format);
         mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
         mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);

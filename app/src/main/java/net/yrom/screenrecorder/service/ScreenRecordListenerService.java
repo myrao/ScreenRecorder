@@ -48,12 +48,12 @@ public class ScreenRecordListenerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 当前界面是桌面，且没有悬浮窗显示，则创建悬浮窗。
         if (!MyWindowManager.isWindowShowing()) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    MyWindowManager.createSmallWindow(getApplicationContext());
-                }
-            });
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    MyWindowManager.createSmallWindow(getApplicationContext());
+//                }
+//            });
         }
         return super.onStartCommand(intent, flags, startId);
     }
