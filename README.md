@@ -1,15 +1,19 @@
 本Demo是在作者Yrom的项目 [ScreenRecorder](https://github.com/yrom/ScreenRecorder) 的基础上额外增加了悬浮窗和通知栏等特性，详情见我的博文[Android实现录屏直播（二）需求才是硬道理之产品功能调研](http://blog.csdn.net/zxccxzzxz/article/details/54254244)，而后又参考了 LakeinChina 作者的 [librestreaming](https://github.com/lakeinchina/librestreaming) 实现推流，目前正在逐步完善中。
 
+## Updated 5.31
+
+工作较忙，一直没时间接着干活，终于抽了一晚上来凑合集成了音频，大家可以试试。
+
 ## Updated 4.25
 
 目前只实现了录屏的 Video 推流，有朋友提到音频迟迟没有，还有摄像头采集也将纳入计划。
 
 ### TODO LIST
 
-- 加入音频采集及推流
-- 加入摄像头采集及推流（包含拍摄直播、录屏直播两种功能）
-- 修复视频端对端延迟过长的问题
+- 加入摄像头采集及推流（包含拍摄直播、录屏直播两种功能，目前 Camera 还不能用，需要完善）
 - 代码重构，改善代码的可读性，并且往 SDK 的方向推进
+-[x] 加入音频采集及推流 (原谅我直接用的 librestreaming 里面的音频采集及软解码的代码，太忙了没时间自己搞)
+-[x] 修复视频端对端延迟过长的问题（目前测试 3~6 s 左右，如果还有问题的可以 M 我）
 
 ------
 
