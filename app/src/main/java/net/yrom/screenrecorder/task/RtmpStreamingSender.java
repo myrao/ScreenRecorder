@@ -113,6 +113,8 @@ public class RtmpStreamingSender implements Runnable {
             }
 
         }
+        final int closeR = RtmpClient.close(jniRtmpPointer);
+        LogTools.e("close result = " + closeR);
     }
 
     public void sendStart(String rtmpAddr) {
