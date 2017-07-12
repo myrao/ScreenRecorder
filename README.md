@@ -1,5 +1,9 @@
 本Demo是在作者Yrom的项目 [ScreenRecorder](https://github.com/yrom/ScreenRecorder) 的基础上额外增加了悬浮窗和通知栏等特性，详情见我的博文[Android实现录屏直播（二）需求才是硬道理之产品功能调研](http://blog.csdn.net/zxccxzzxz/article/details/54254244)，而后又参考了 LakeinChina 作者的 [librestreaming](https://github.com/lakeinchina/librestreaming) 实现推流，目前正在逐步完善中。
 
+## Updated 7.12
+
+年初买的阿里云的ECS服务器**已经到期**了,所以大家无法使用之前的IP进行测试了,请大家自行搭建服务器使用吧~
+
 ## Updated 5.31
 
 工作较忙，一直没时间接着干活，终于抽了一晚上来凑合集成了音频，大家可以试试。
